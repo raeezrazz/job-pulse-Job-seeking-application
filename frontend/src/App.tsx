@@ -1,8 +1,7 @@
-import { useState } from 'react'
 import Router from './routes/MainRouter'
+import './index.css';
 
 
-import './App.css'
 
 function App() {
 

@@ -1,9 +1,12 @@
-import React from 'react'
-import { Route,Router,Routes } from 'react-router-dom'
+import Header from "../components/user/Header"
+
 function Home() {
+
+
   return (
-    <div>
-      ironvflxcmfdvokcxl
+    <div className="bg-[url('https://pilipinasatbp.wordpress.com/wp-content/uploads/2018/03/stock-photo-group-of-smiling-people-with-different-jobs-standing-in-line-on-white-background-128885864.jpg?w=630')] h-screen bg-cover bg-center">
+      <Header/>
+      
     </div>
   )
 }
