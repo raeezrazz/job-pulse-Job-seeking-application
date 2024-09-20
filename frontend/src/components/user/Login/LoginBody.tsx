@@ -1,68 +1,109 @@
-import React from 'react';
+import React, { useState } from "react";
 
-function LoginBody() {
+const LoginBody = () => {
+  // State for form inputs
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Perform login action here (e.g., API call)
+    console.log({
+      username,
+      password,
+      rememberMe,
+    });
+  };
+
   return (
-    <div className="relative h-screen">
-      
-      {/* Background color divisions */}
-      <div className="absolute inset-0 w-1/3 bg-blue-500 h-full"></div>
-      <div className="absolute inset-0 w-2/3 bg-white h-full ml-[33%] mt-4"></div>
-      
-      {/* Centered Login Modal */}
-      <div className="relative z-10 flex justify-center items-center h-full">
-        {/* Modal container with transparency and shadow */}
-        <div className="bg-white bg-opacity-70 -lg shadow-2xl w-full max-w-[80%] p-8 relative h-[80%]">
-          {/* Close button (optional, can be added if needed) */}
-          
-          <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+    <div className="bg-white flex justify-center items-center h-screen">
+      {/* Left: Image */}
+      <div className="w-1/2 h-screen hidden lg:block">
+        <img
+          src='./wallpaperflare.com_wallpaper.jpg'
+          className="object-cover w-full h-full"
+        />
+      </div>
 
-          <form className="space-y-6 w-[60%] ">
-            {/* Username field */}
-            <div>
-              <label className="block text-gray-700 text-lg">Username</label>
-              <input
-                type="text"
-                className="w-full border border-gray-300 rounded-md py-3 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            
-            {/* Password field */}
-            <div>
-              <label className="block text-gray-700 text-lg">Password</label>
-              <input
-                type="password"
-                className="w-full border border-gray-300 rounded-md py-3 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            
-            {/* Remember Me Checkbox */}
-            <div className="flex items-center">
-              <input type="checkbox" id="remember" className="mr-3" />
-              <label htmlFor="remember" className="text-gray-600 text-lg">Remember Me</label>
-            </div>
-            
-            {/* Login Button */}
-            <button
-              type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-md text-lg"
-            >
-              Login
-            </button>
-          </form>
+      {/* Right: Login Form */}
+      <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
+        <h1 className="text-2xl font-semibold mb-4">Login</h1>
 
-          {/* Forgot password */}
-          <div className="mt-6 text-blue-500 text-center">
-            <a href="#" className="hover:underline text-lg">Forgot Password?</a>
+        <form onSubmit={handleSubmit}>
+          {/* Username Input */}
+          <div className="mb-4">
+            <label htmlFor="username" className="block text-gray-600">
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="off"
+            />
           </div>
 
-          {/* Sign-up link */}
-          <div className="mt-6 text-blue-500 text-center">
-            <a href="#" className="hover:underline text-lg">Sign up Here</a>
+          {/* Password Input */}
+          <div className="mb-4">
+            <label htmlFor="password" className="block text-gray-800">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="off"
+            />
           </div>
+
+          {/* Remember Me Checkbox */}
+          <div className="mb-4 flex items-center">
+            <input
+              type="checkbox"
+              id="remember"
+              name="remember"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="text-red-500"
+            />
+            <label htmlFor="remember" className="text-green-900 ml-2">
+              Remember Me
+            </label>
+          </div>
+
+          {/* Forgot Password Link */}
+          <div className="mb-6 text-blue-500">
+            <a href="#" className="hover:underline">
+              Forgot Password?
+            </a>
+          </div>
+
+          {/* Login Button */}
+          <button
+            type="submit"
+            className="bg-red-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full"
+          >
+            Login
+          </button>
+        </form>
+
+        {/* Sign up Link */}
+        <div className="mt-6 text-green-500 text-center">
+          <a href="#" className="hover:underline">
+            Sign up Here
+          </a>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default LoginBody;
