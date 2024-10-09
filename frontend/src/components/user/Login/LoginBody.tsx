@@ -1,6 +1,8 @@
 import React, { useState ,useEffect } from "react";
 import axios from "axios";
 import Login from "../../../Pages/Login";
+import { signUp } from "../../../api/userApi";
+import apiClient from "../../../api/apiClient/axios";
 
 const LoginBody = () => {
 
@@ -49,10 +51,12 @@ const LoginBody = () => {
 
     try {
       console.log("Sending registration/login request...");
-      const response = await axios.post('http://localhost:5001/api/user/register', {
-        name: !loginPage ? undefined : name, // Send name only if not on login page
-        email,
-        password,
+      const response = await apiClient('/user/register', {
+        data:{
+          name:!loginPage ? undefined : name, // Send name only if not on login page
+          email,
+          password,
+        },
       });
       console.log(response.data); // Handle successful response
     } catch (error) {
