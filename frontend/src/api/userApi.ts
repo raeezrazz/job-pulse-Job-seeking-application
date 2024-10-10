@@ -13,7 +13,13 @@ interface SignUpFormData {
 }
 
 export const signUp = async(formData: SignUpFormData) =>{
-    return await apiClient.post("/user/register",{
-        formData,
-    }); 
+    return await apiClient.post("/user/register",formData,); 
+}
+
+export const resentOtp = async(email) =>{
+    return await apiClient.post("/user/resentOtp",{email})
+}
+
+export const verifyOtp = async(otp, email)=>{
+    return await apiClient.post("/user/verifyOtp",{email,otp})
 }

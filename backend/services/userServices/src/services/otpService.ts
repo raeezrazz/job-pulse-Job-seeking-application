@@ -15,6 +15,13 @@ export class OtpService {
     }
 
     async sendMail(email:string){
+
+        const otpExist = await this.otpRepository.findOtp(email)
+
+        if(otpExist){
+            await this.otpRepository.removeOtp(email)
+        }
+
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
             port: 587,
@@ -67,5 +74,26 @@ export class OtpService {
 
 
     }
+
+    async verifyOtp(email:string , otp: string){
+        console.log("here is the verify otp")
+        
+        const otpExist = await this.otpRepository.findOtp(email)
+        console.log(otpExist,"otp exist result")
+        if(!otpExist){
+            console.log("otp not exist")
+            return false
+        }
+        const validateOtp = await bcrypt.compare(otp,otpExist.otp)
+        console.log(validateOtp)
+        if(validateOtp){
+            await this.otpRepository.removeOtp(email)
+            console.log("here is otp")
+            return true
+        }else{
+            return false
+        }
+    }
+
 
 }

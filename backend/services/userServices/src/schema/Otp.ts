@@ -19,3 +19,13 @@ const OtpSchema: Schema<IOtp> = new Schema({
 
 export const Otp = mongoose.model("Otp",OtpSchema)
 
+OtpSchema.pre("updateOne", function(next){
+    this.set({createdAt: new Date()});
+    next()
+})
+
+OtpSchema.pre("updateOne", function (next){
+    this.set({creaetdAt: new Date()});
+    next();
+})
+

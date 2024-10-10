@@ -1,4 +1,13 @@
+import { useNavigate } from "react-router-dom";
+
+
 function Header() {
+  const navigate = useNavigate()
+
+  const handleLogin = async()=>{
+    navigate('/login')
+  }
+
     return (
         <header className="sticky max-w-[85%] mx-auto text-sky-500 p-4 flex justify-between items-center bg-white shadow-md">
         <div className="text-2xl font-bold">
@@ -10,7 +19,7 @@ function Header() {
         <a href="#jobs" className="text-black hover:text-blue-500">Jobs</a>
       </div>
         <div className="flex space-x-4">
-        <button className="bg-orange-600 hover:bg-orange-600 text-white font-semibold py-1 px-4 rounded-md">
+        <button onClick={handleLogin} className="bg-orange-600 hover:bg-orange-600 text-white font-semibold py-1 px-4 rounded-md">
   Join Now
 </button>
 
