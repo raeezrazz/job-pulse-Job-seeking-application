@@ -55,8 +55,8 @@
 
 
     const handleChange = (e, index) => {
-      const newOtp = [...otp]; // Create a copy of the OTP array
-      newOtp[index] = e.target.value; // Update the specific index with the new value
+      const newOtp = [...otp];
+      newOtp[index] = e.target.value; 
       setOtp(newOtp);
   
       // Focus on the next input if the current input has a value

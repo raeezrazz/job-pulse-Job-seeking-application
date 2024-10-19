@@ -16,10 +16,10 @@ export const signUp = async(formData: SignUpFormData) =>{
     return await apiClient.post("/user/register",formData,); 
 }
 
-export const resentOtp = async(email) =>{
+export const resentOtp = async(email:string) =>{
     return await apiClient.post("/user/resentOtp",{email})
 }
 
-export const verifyOtp = async(otp, email)=>{
+export const verifyOtp = async(otp:number, email:string)=>{
     return await apiClient.post("/user/verifyOtp",{email,otp})
 }
