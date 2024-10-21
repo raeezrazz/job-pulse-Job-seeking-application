@@ -1,6 +1,8 @@
 import {  MapPin} from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 export default function Header() {
+  const navigate = useNavigate()
   return (
     <header className="px-4 lg:px-6 h-14 flex items-center">
     <a className="flex items-center justify-center" href="#">
@@ -14,7 +16,7 @@ export default function Header() {
       <a className="text-sm font-medium hover:underline underline-offset-4" href="#">
         How it Works
       </a>
-      <a className="text-sm font-medium hover:underline underline-offset-4" href="#">
+      <a onClick={()=>navigate('/login')} className="text-sm font-medium hover:underline underline-offset-4" href="/login">
         Sign In
       </a>
     </nav>

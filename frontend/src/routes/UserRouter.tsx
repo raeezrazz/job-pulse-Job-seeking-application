@@ -1,6 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import Home from '../Pages/UserSide/Home';
 import Login from "../Pages/UserSide/Login";
+import Profile from "../Pages/UserSide/Profile";
+
 
 function UserRouter() {
   return (
