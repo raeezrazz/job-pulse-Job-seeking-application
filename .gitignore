@@ -3,3 +3,6 @@ frontend/package-lock.json
 frontend/.env
 backend/userServices/node_modules
 backend/userServices/.env
+backend/API gateway/.env
+backend/API gateway/package-lock.json
+backend/API gateway.node_modules

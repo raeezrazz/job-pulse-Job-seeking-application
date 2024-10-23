@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES6",                        // Set ECMAScript target version
+    "module": "commonjs",                   // Use commonjs for module resolution (for Node.js)
+    "strict": true,                         // Enable all strict type-checking options
+    "esModuleInterop": true,                // Ensure compatibility with ES module imports
+    "skipLibCheck": true,                   // Skip type checking of declaration files
+    "forceConsistentCasingInFileNames": true // Enforce consistent file casing
+  },
+  "include": ["src/**/*"]                    // Specify which files should be included
+}

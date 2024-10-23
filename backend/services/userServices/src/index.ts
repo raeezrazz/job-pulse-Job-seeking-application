@@ -5,19 +5,27 @@ import router from "./routes/userRouter";
 
 import cors from "cors"
 import cookieParser from "cookie-parser"
+dotenv.config();
 const app = express();
 
-dotenv.config();
 
-connectDB()
 
 app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 app.use(cors({origin:'http://localhost:5173'}))
+// app.use(cors())
 app.use(cookieParser())
 
-app.use('/api/user',router)
 
-const PORT = process.env.PORT || 5000;
+
+app.use('/user',router)
+// app.use('/',(req,res)=>{
+//     console.log("here sis user server")
+// })
+
+
+connectDB()
+const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, ()=>{
     console.log(`user service port : ${PORT}`)

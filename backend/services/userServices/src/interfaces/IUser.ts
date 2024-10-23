@@ -5,6 +5,7 @@ export default interface IUser extends Document{
     name: string;
     email:string;
     password?:string;
-    // isAuthUser?:boolean;
+    isVerified?:boolean;
+    isAdmin:boolean
 
 }

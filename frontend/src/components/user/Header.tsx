@@ -1,8 +1,14 @@
 import {  MapPin} from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { Rootstate } from "../../store/store"
+import { useSelector } from "react-redux"
 
 export default function Header() {
   const navigate = useNavigate()
+
+  const userInfo = useSelector((state: Rootstate)=> state.user.userInfo)
+  console.log(userInfo,"user infoansdjgnajsdnvjasnvjas")
+
   return (
     <header className="px-4 lg:px-6 h-14 flex items-center">
     <a className="flex items-center justify-center" href="#">
@@ -16,9 +22,16 @@ export default function Header() {
       <a className="text-sm font-medium hover:underline underline-offset-4" href="#">
         How it Works
       </a>
-      <a onClick={()=>navigate('/login')} className="text-sm font-medium hover:underline underline-offset-4" href="/login">
+      {userInfo ? (
+        <a onClick={()=>navigate('/profile')} className="text-sm font-medium hover:underline underline-offset-4" >
+        Profile
+      </a>
+      ):(
+        <a onClick={()=>navigate('/login')} className="text-sm font-medium hover:underline underline-offset-4" >
         Sign In
       </a>
+      )}
+     
     </nav>
   </header>
   )

@@ -1,112 +1,90 @@
-import React,{useState} from 'react';
-import { adminLogin } from '../../../api/adminApi';
+'use client'
 
-function AdminLoginPage() {
-
-  const [email,setEmail] = useState<string>('')
-  const [password,setPassword]=useState<string>('')
-  const [emailError, setEmailError] =useState<string>('')
-  const [passwordError, setPasswordError]= useState<string>('')
+import { useState } from 'react'
+import {  MapPin} from "lucide-react"
 
 
-  interface FormErrors {
-    email: string;
-    password: string;
-  }
+export default function AdminLogin() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
-
-  const validateEmail = (email:string)=>{
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(email);
-  }
-
-  const validatePassword = (password: string): boolean => {
-    const passwordRegex = /^\S+$/;
-    return passwordRegex.test(password);
-  };
-
-
-  const handleSubmit = async (e:any): Promise<void> => {
-    let isFormValid: boolean = true;
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-  
-  
-    setEmailError('');
-    setPasswordError('');
-  
-    if (!validateEmail(email)) {
-      setEmailError('Please enter a valid email address.');
-      isFormValid = false;
-    }
-  
-    // if (!validatePassword(password)) {
-    //   setPasswordError('Password cannot be empty.');
-    //   isFormValid = false;
-    // }
-  
-    if (isFormValid) {
-      try {
-        console.log("dfd")
-        console.log('Form is valid. Submitting...');
-        const response = adminLogin({email,password})
-        console.log(response)
+    setError('')
 
-
-      } catch (error: unknown) {
-        console.log(error,"error while submiting")
-      }
+    if (!email || !password) {
+      setError('Please fill in all fields')
+    } else {
+      
     }
-  };
-  
+  }
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-600">
-      <div className="bg-gray-600rounded-lg p-6 lg:w-1/3 w-full mx-4">
-        <h2 className="text-xl font-semibold text-center text-gray-700 mb-4">
-          Admin Login
-          <p>{emailError,passwordError}</p>
-        </h2>
-        <form  onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 font-medium mb-1">
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="w-full border bg-gray-800 border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter your email"
-              autoComplete="off"
-            />
+    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+      <div className="bg-white shadow-md rounded-lg w-full max-w-md p-6">
+        <div className="space-y-1 text-center mb-4">
+          <div className="flex items-center justify-center mb-4">
+          <MapPin className="h-6 w-6" />
+            <span className="ml-2 text-3xl font-bold text-black-600">Job Pulse</span>
           </div>
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-700 font-medium mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter your password"
-              autoComplete="off"
-            />
+          <h2 className="text-1xl font-bold">Admin Login</h2>
+          <p className="text-gray-600">Enter your credentials to access the admin dashboard</p>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+              <div className="relative">
+                <input
+                  id="email"
+                  placeholder="admin@jobpulse.com"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  required
+                />
+              </div>
+            </div>
           </div>
-          <div className="text-right mb-3">
-            <a href="#" className="text-sm text-blue-500 hover:underline">
-              Forgot Password?
-            </a>
-          </div>
+
+          {error && (
+            <div className="mt-4 bg-red-100 text-red-600 p-3 rounded-md">
+              <strong>Error:</strong> {error}
+            </div>
+          )}
+
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors"
+            className="w-full mt-6 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
           >
-            Login
+            Log In
           </button>
         </form>
+
+        <div className="flex flex-col space-y-2 mt-4">
+          <button className="text-blue-600 text-sm">Forgot password?</button>
+          <p className="text-xs text-center text-gray-500">
+            This is a secure area. Unauthorized access is prohibited.
+          </p>
+        </div>
       </div>
     </div>
-  );
+  )
 }
-
-export default AdminLoginPage;
