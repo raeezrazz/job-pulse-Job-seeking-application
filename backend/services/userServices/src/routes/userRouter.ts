@@ -14,4 +14,7 @@ router.post('/getUserData',userController.getUserData)
 //password
 router.patch('/changePassword',userController.changePassword)
 
+//Profile
+router.patch('/updateUser',userController.updateUserData)
+
 export default router

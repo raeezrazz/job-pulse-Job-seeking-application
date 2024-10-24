@@ -92,7 +92,7 @@ const LoginBody = () => {
           }
           console.log("backend login req going")
           const response = await login(data)
-          console.log(response)
+          console.log("register response",response)
           if(response.data.success){
             localStorage.setItem(
               "accessToken",
@@ -101,6 +101,8 @@ const LoginBody = () => {
             dispatch(setCredentials(response.data));
             
             navigate('/')
+          }else{
+          
           }
 
         } catch (error) {
@@ -143,8 +145,9 @@ const LoginBody = () => {
             password,
           };
           const response = await signUp(data);
-
+          console.log("register response came 33333333333333333",response)
           if (response.data.success) {
+            dispatch(setCredentials(response.data))
             localStorage.setItem(
               "accessToken",
               JSON.stringify(response.data.accessToken)

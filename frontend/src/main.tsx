@@ -7,7 +7,12 @@ import { Provider } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import Modal from 'react-modal';
+
+Modal.setAppElement('#root'); // Ensure this is set
+
 createRoot(document.getElementById('root')!).render(
+
   <StrictMode>
 
     <Provider store={store}>

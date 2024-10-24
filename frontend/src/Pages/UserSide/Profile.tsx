@@ -1,5 +1,6 @@
 import React from 'react'
 import Header from '../../components/user/Header'
+import Footer from '../../components/user/Footer'
 import ProfileBody from '../../components/user/Profile/ProfileBody'
 
 function Profile() {
@@ -7,6 +8,7 @@ function Profile() {
     <div>
         <Header/>
         <ProfileBody/>
+        <Footer/>
     </div>
   )
 }

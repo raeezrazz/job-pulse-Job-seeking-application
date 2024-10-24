@@ -23,7 +23,6 @@ export const userTypeSlce = createSlice({
         setCredentials: (state, action) =>{
             console.log(action,"here is the actio data")
             state.userInfo = action.payload.data;
-            localStorage.setItem("userInfo",JSON.stringify(action.payload.data));
 
         },
         logout: (state) => {

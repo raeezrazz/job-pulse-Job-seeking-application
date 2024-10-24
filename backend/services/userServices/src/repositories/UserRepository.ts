@@ -1,5 +1,5 @@
 import { User } from "../schema/User";
-import IUser from "../interfaces/IUser";
+import {IUser,IUpdatedUser} from "../interfaces/IUser";
 
 export class UserRepository {
   public async createUser(userData: IUser): Promise<IUser> {
@@ -31,9 +31,9 @@ export class UserRepository {
     }
   }
 
-  public async getUserData(userId:string):Promise<any>{
+  public async getUserData(email:string):Promise<any>{
     try{
-        const user = await User.findOne({_id:userId})
+        const user = await User.findOne({email:email})
         if(!user){
              throw new Error('User not found')
         }
@@ -44,19 +44,51 @@ export class UserRepository {
     }
   }
 
-  public async updatePassword(email:string, newPassword:string):Promise<any>{
+  public async updatePassword(email: string, newPassword: string): Promise<boolean> {
     try {
-      console.log("here is respositauh")
-      const user = await User.findOne({email:email})
-      if(user){
-        user.password= newPassword
-        await user.save()
-        return true
+      const user = await User.findOne({ email });
+  
+      if (user) {
+        user.password = newPassword;
+        await user.save();
+        return true;
       }
       
+      return false;
     } catch (error) {
-      console.log(error)
+      console.error(error);
+      throw new Error("Error updating password");
     }
   }
 
+  public async updateUser(newUserDetails: IUpdatedUser): Promise<boolean> {
+    try {
+      
+      const user = await User.findOne({ email: newUserDetails.email });
+      
+     
+      if (!user) {
+        console.log("User not found");
+        return false;
+      }
+  
+      // Update the user fields
+      user.name = newUserDetails.name || user.name; 
+      user.dob = newUserDetails.dob || user.dob;  
+      user.bio = newUserDetails.bio || user.bio;   
+      user.phone = newUserDetails.phone || user.phone;   
+
+  
+     
+      await user.save();
+
+      console.log(user,"here is the repository data ")
+  
+      return true;
+    } catch (error) {
+      console.log("Error while updating User details", error);
+      return false; 
+    }
+  }
+  
 }

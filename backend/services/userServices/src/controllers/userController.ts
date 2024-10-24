@@ -1,5 +1,5 @@
 import { getUserData } from "./../../../../../frontend/src/api/userApi";
-import IUser from "../interfaces/IUser";
+import {IUser,IUpdatedUser} from "../interfaces/IUser";
 import { UserService } from "./../services/userService";
 import { Request, Response } from "express";
 import { OtpService } from "../services/otpService";
@@ -59,6 +59,7 @@ export class UserController {
 
       const userExists = await this.userService.userExist(email);
       if (userExists) {
+        console.log("email already")
         return res
           .status(400)
           .json({ already: true, message: "user already exist" });
@@ -158,8 +159,9 @@ export class UserController {
 
   public getUserData = async (req: Request, res: Response): Promise<any> => {
     try {
-      const { userId } = req.body;
-      const user = await this.userService.getUserData(userId);
+      const { email } = req.body;
+      console.log()
+      const user = await this.userService.getUserData(email);
       if (!user) {
         res.status(404).json({
           message: "User not found",
@@ -178,23 +180,73 @@ export class UserController {
     }
   };
 
-  public changePassword = async (req: Request , res:Response): Promise<any> =>{
+  public changePassword = async (req: Request, res: Response): Promise<any> => {
     try {
-      const {email , oldPassword , newPassword} = req.body
-    
+      const { email, oldPassword, newPassword } = req.body;
+  
       const result = await this.userService.changePassword(email, oldPassword, newPassword);
-      if(result){
-        res.status(200)
-        .json({
-          success:true,
-          message:"User password changed successfully"
-        })
+      console.log(result,"result is sisisisisisissisisisisisisisisis")
+      if (result.success) {
+        return res.status(200).json({
+          success: true,
+          message: result.message || "User password changed successfully",
+        });
+      } else {
+        console.log("here else is working")
+        return res.status(result.statusCode).json({
+          success: false,
+          message: result.message,
+        });
       }
-
     } catch (error) {
-      res.status(500).json({
-        message:'Internal Server Error'
-      })
+      return res.status(500).json({
+        success: false,
+        message: "Internal Server Error",
+      });
     }
-  }
+  };
+
+  public updateUserData = async (req: Request, res: Response): Promise<any> => {
+    console.log(req.body, "Request body");
+    
+    try {
+      const userData = req.body.userData;
+      console.log(userData);
+      
+      const userExists = await this.userService.userExist(userData.email);
+      console.log(userExists);
+      
+      if (!userExists) {
+        return res.status(400).json({
+          success: false,
+          message: "User not found"
+        });
+      }
+      
+      const updateUserData = await this.userService.updateUserDetails(userData);
+      
+      if (updateUserData.success) {
+        return res.status(200).json({
+          success: true,
+          message: "User details updated successfully",
+          data: updateUserData 
+        });
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "User update failed"
+        });
+      }
+    } catch (error) {
+      console.log("Error in updating user data", error);
+      
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while updating user data",
+        error: error 
+      });
+    }
+  };
+  
+  
 }

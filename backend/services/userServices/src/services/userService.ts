@@ -1,8 +1,8 @@
-import { changePassword } from './../../../../../frontend/src/api/userApi';
+import { changePassword, updateUserDetails } from './../../../../../frontend/src/api/userApi';
 import { OtpRepository } from './../repositories/OtpRepository';
 import { UserRepository } from './../repositories/UserRepository';
 
-import IUser from "../interfaces/IUser";
+import {IUser ,IUpdatedUser}from "../interfaces/IUser";
 import bcrypt from "bcryptjs"; 
 import { generateAccessToken,generateRefreshToken } from '../utils/jwt/generateToken';
 
@@ -75,8 +75,8 @@ export class UserService {
         return userWithoutPassword  
     }
 
-    async getUserData(userId:string):Promise<IUser>{
-        const userData = await this.userRepository.getUserData(userId)
+    async getUserData(email:string):Promise<IUser>{
+        const userData = await this.userRepository.getUserData(email)
         if(!userData){
             throw new Error("User not found")
         }
@@ -85,44 +85,80 @@ export class UserService {
 
     async changePassword(email: string, oldPassword: string, newPassword: string): Promise<any> {
         const user = await this.userRepository.findUserByEmail(email);
-        console.log(user, "here is the user data");
-      
+        
         if (!user) {
-            console.log("no user")
           return {
             success: false,
-            message: 'User not found',
-            statusCode: 404
+            message: "User not found",
+            statusCode: 404,
           };
         }
       
         if (!user.password) {
-            console.log("no password")
           return {
             success: false,
-            message: 'User does not have a password set',
-            statusCode: 400
+            message: "User does not have a password set",
+            statusCode: 400,
           };
         }
       
         const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
-        console.log(isPasswordValid)
+        
         if (!isPasswordValid) {
-            console.log("no pasword")
           return {
             success: false,
-            message: 'Incorrect old password',
-            statusCode: 400
+            message: "Incorrect old password",
+            statusCode: 400,
           };
         }
       
+        // Hash the new password
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-        console.log(hashedPassword)
-        const result = await this.userRepository.updatePassword(user.email,hashedPassword)
-        if(result){
-            return true
+      
+        // Update the user's password
+        const result = await this.userRepository.updatePassword(user.email, hashedPassword);
+      
+        if (result) {
+          return {
+            success: true,
+            message: "Password updated successfully",
+            statusCode: 200,
+          };
         }
-        
+      
+        return {
+          success: false,
+          message: "Failed to update password",
+          statusCode: 500,
+        };
       }
+
+
+      async updateUserDetails(updatedDetails: IUpdatedUser): Promise<any> {
+        try {
+          const response = await this.userRepository.updateUser(updatedDetails);
+      
+          if (response === true) {
+            return {
+              success: true,
+              message: "User details updated successfully",
+            };
+          } else {
+            return {
+              success: false,
+              message: "User update failed. No matching user found or update was unsuccessful.",
+            };
+          }
+        } catch (error) {
+          console.log("Error in updating user details:", error);
+          return {
+            success: false,
+            message: "An error occurred while updating user details",
+            error: error, 
+          };
+        }
+      }
+      
+      
 
 }

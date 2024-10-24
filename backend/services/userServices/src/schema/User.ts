@@ -1,5 +1,5 @@
 import mongoose , {Schema} from "mongoose"
-import IUser from "../interfaces/IUser"
+import {IUser} from "../interfaces/IUser"
 
 
 const UserSchema : Schema = new Schema({
@@ -15,6 +15,18 @@ const UserSchema : Schema = new Schema({
     password:{
         type:String,
         required: true
+    },
+    bio:{
+        type:String,
+        required:false
+    },
+    dob:{
+        type:Date,
+        required:false
+    },
+    phone:{
+        type:Number,
+        required:false
     },
     isVerified:{
         type:Boolean,
