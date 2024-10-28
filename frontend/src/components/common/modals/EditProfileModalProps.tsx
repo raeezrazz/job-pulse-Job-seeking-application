@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 
 function EditProfileModal({ isOpen, onClose, userInfo, onSave }) {
-  console.log(userInfo,"edit uderInfo")
+  // console.log(userInfo,"edit uderInfo")
+  console.log("editModal",userInfo)
   const [name, setName] = useState(userInfo.name || "");
   const [phone, setPhone] = useState(userInfo.phone || "");
   const [dob, setDob] = useState(userInfo.dob || "");
   const [bio, setBio] = useState(userInfo.bio || "");
   const [profileImage, setProfileImage] = useState(userInfo.profileImage || "");
-  console.log(userInfo,"edit uderInfo",dob,bio,phone,name)
+  // console.log(userInfo,"edit uderInfo",dob,bio,phone,name)
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];

@@ -4,7 +4,7 @@ import { UserRepository } from './../repositories/UserRepository';
 
 import {IUser ,IUpdatedUser}from "../interfaces/IUser";
 import bcrypt from "bcryptjs"; 
-import { generateAccessToken,generateRefreshToken } from '../utils/jwt/generateToken';
+import { generateAccessToken,generateRefreshToken , decodeAccessTokenData } from '../utils/jwt/generateToken';
 
 export class UserService {
 
@@ -24,24 +24,40 @@ export class UserService {
         return null
     }
 
-    async login(email:string , enterdPassword:string): Promise<{userData:any; accessToken:string ; refreshToken :string}> {
-        const user = await this.userRepository.findUserByEmail(email);
-        if(!user){
-            throw new Error("Invalid email ")
-        }
-        console.log("checking password")
-        const isPassword = await bcrypt.compare(enterdPassword, user.password ?? '');
-        console.log(isPassword,"here is the result")
+    async updateRefreshToken(refreshToken: string): Promise<any> {
+      const newRefreshToken = generateRefreshToken(refreshToken);
+      
+      return newRefreshToken;
+    }
 
-        if(!isPassword){
-            throw new Error("Invalid Email or Password")
-        }
-        const userId:string = user._id.toString()
-        const accessToken = generateAccessToken(userId)
-        const refreshToken = generateRefreshToken(userId)
-        const {password, ...userWithoutPassword} = user
-        console.log(userWithoutPassword,"Dfadsfa")
-        return {userData:userWithoutPassword , accessToken , refreshToken}
+    async login(email: string, enteredPassword: string): Promise<{ userData: any; accessToken: string; refreshToken: string }> {
+      const user = await this.userRepository.findUserByEmail(email);
+    
+      // Check if user exists
+      if (!user) {
+        throw new Error("Invalid email or password");
+      }
+    
+      // Verify the password
+      const isPasswordMatch = await bcrypt.compare(enteredPassword, user.password ?? '');
+      if (!isPasswordMatch) {
+        throw new Error("Invalid email or password");
+      }
+    
+      // Generate tokens
+      const userId = user._id.toString();
+      const accessToken = generateAccessToken(userId);
+      const refreshToken = generateRefreshToken(userId);
+    
+      // Exclude the password from the response
+      const { password, ...userWithoutPassword } = user;
+    
+      // Return user data, accessToken, and refreshToken
+      return {
+        userData: userWithoutPassword,
+        accessToken,
+        refreshToken,
+      };
     }
 
     async registerUser(userData: IUser): Promise<{user:IUser; accessToken:string; refreshToken : string}>{
@@ -75,12 +91,31 @@ export class UserService {
         return userWithoutPassword  
     }
 
-    async getUserData(email:string):Promise<IUser>{
-        const userData = await this.userRepository.getUserData(email)
-        if(!userData){
-            throw new Error("User not found")
+    async getUserData(token:string):Promise<any>{
+
+      try {
+        const decoded: any = decodeAccessTokenData(token);
+    
+        console.log(decoded, "here is the decoded");
+    
+        if (!decoded || !decoded.userId) {
+          throw new Error("Invalid token or user ID not found.");
         }
+    
+        const userId: string = decoded.userId.toString();
+    
+        const userData = await this.userRepository.getUserData(userId);
+        
+        if (!userData) {
+          throw new Error("User not found");
+        }
+        
         return userData
+    
+      } catch (error) {
+        console.error("Error getting user data:", error);
+        return false; // Return false or handle as needed in case of error
+      }
     }
 
     async changePassword(email: string, oldPassword: string, newPassword: string): Promise<any> {
@@ -159,6 +194,21 @@ export class UserService {
         }
       }
       
+      async loadAllUsers(): Promise<any[]> {
+        try {
+          const loadAllUsers = await this.userRepository.loadUsers();
+          
+         
+          if (Array.isArray(loadAllUsers)) {
+            return loadAllUsers;
+          } else {
+            throw new Error("Unexpected data format from repository");
+          }
+        } catch (error) {
+          console.error("Error loading users in service:", error);
+          throw error; 
+        }
+      }
       
 
 }

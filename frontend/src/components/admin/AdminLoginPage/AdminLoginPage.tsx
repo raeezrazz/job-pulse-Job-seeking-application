@@ -2,9 +2,12 @@
 
 import { useState } from 'react'
 import {  MapPin} from "lucide-react"
-
+import { adminLogin } from '../../../api/adminApi'
+import { UseDispatch, useDispatch } from 'react-redux'
+import { setAdminCredentials,adminLogout } from '../../../store/slice/adminSlice'
 
 export default function AdminLogin() {
+  const dispatch = useDispatch()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -16,7 +19,9 @@ export default function AdminLogin() {
     if (!email || !password) {
       setError('Please fill in all fields')
     } else {
-      
+      const response = await adminLogin({email,password})
+      console.log(response,"here is the response")
+      dispatch(setAdminCredentials(response.data))
     }
   }
 

@@ -1,4 +1,3 @@
-import { getUserData } from "./../../../../../frontend/src/api/userApi";
 import {IUser,IUpdatedUser} from "../interfaces/IUser";
 import { UserService } from "./../services/userService";
 import { Request, Response } from "express";
@@ -14,40 +13,52 @@ export class UserController {
   }
 
   public login = async (req: Request, res: Response): Promise<any> => {
-    console.log("loginworking", req.body);
-
     try {
       const { email, password } = req.body;
-      const { userData, accessToken, refreshToken } = await this.userService.login(
-        email,
-        password
-      );
-
+  
+      // Attempt to log in the user using the userService
+      const { userData, accessToken, refreshToken } = await this.userService.login(email, password);
+  
+      if (!userData) {
+        return res.status(401).json({
+          success: false,
+          message: "Invalid email or password",
+        });
+      }
+  
+      // Set the refresh token as a secure HTTP-only cookie
       res.cookie("jwt-refresh", refreshToken, {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
         path: "/refresh-token",
       });
-      console.log("login success and response going")
-      res.status(200).json({
+  
+      // Set the access token as a secure HTTP-only cookie
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: true, // Enable this if using HTTPS
+        maxAge: 15 * 60 * 1000, // Expires in 15 minutes
+      });
+  
+      // Send a successful response
+      return res.status(200).json({
         success: true,
         data: userData,
-        accessToken: accessToken,
-        message: "User Login Successfull",
+        message: "User login successful",
       });
-    } catch (err:unknown) {
-      const error = err as Error;
-      console.error("Login failed:", error.message);
-
-      // Handle specific errors
-      if (error.message === "Invalid email or password") {
-        return res.status(401).json({ message: "Invalid email or password" });
+    } catch (error) {
+      // Log the error details for debugging purposes
+      console.error("Login failed:", (error as Error).message);
+  
+      if ((error as Error).message === "Invalid email or password") {
+        return res.status(401).json({ success: false, message: "Invalid email or password" });
       }
-
-      // For any other errors
-      res.status(500).json({
-        message: "Internal Server Error",
+  
+      // For unexpected errors, return a generic error message
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error. Please try again later.",
       });
     }
   };
@@ -70,13 +81,17 @@ export class UserController {
       const form: IUser = { name, email, password } as IUser;
       const { user, accessToken, refreshToken } =
         await this.userService.registerUser(form);
+        res.cookie('accessToken', accessToken, {
+          httpOnly: true,
+          secure: true, // set true if using https
+          maxAge: 15 * 60 * 1000, // 15 minutes
+        });
 
-      res.cookie("jwt-refresh", refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "strict",
-        path: "/refresh-token",
-      });
+        res.cookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          secure: true, // set true if using https
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
 
       this.otpService.sendMail(email);
       console.log("ere is the user info data stored in the backend", user);
@@ -90,6 +105,43 @@ export class UserController {
       return res.status(500).json({ message: "server error", error });
     }
   };
+
+
+  public refreshTokenUpdate = async(req:Request , res: Response):Promise<any>=>{
+    
+    try{
+    const refreshToken = req.cookies.refreshToken;
+      console.log(refreshToken , "here is the refresh")
+    if(!refreshToken){
+      return res.status(403).json({
+        message:'No refresh token found'
+      });
+
+      const generateNewRefreshToken = await this.userService.updateRefreshToken(refreshToken)
+
+      res.cookie('refreshToken', generateNewRefreshToken, {
+        httpOnly: true,
+        secure: true, // set true if using https
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+
+      return res.status(200).json({
+        message: "Token refreshed successfully",
+        refreshToken: generateNewRefreshToken,
+      });
+
+    }
+
+  }catch(err:any){
+    return res.status(500).json({
+      message: "Failed to refresh token",
+      error: err.message,
+    });
+  }
+
+  }
+
+
 
   public resentOtp = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -159,9 +211,17 @@ export class UserController {
 
   public getUserData = async (req: Request, res: Response): Promise<any> => {
     try {
-      const { email } = req.body;
-      console.log()
-      const user = await this.userService.getUserData(email);
+      const accessToken = req.cookies.accessToken
+      console.log(accessToken,"acceddtoken")
+      if(!accessToken){
+        res.status(401)
+        .json({
+          message:"User Token not found"
+        })
+      }
+
+
+      const user = await this.userService.getUserData(accessToken)
       if (!user) {
         res.status(404).json({
           message: "User not found",
@@ -244,6 +304,45 @@ export class UserController {
         success: false,
         message: "An error occurred while updating user data",
         error: error 
+      });
+    }
+  };
+
+  public logoutUser = async(req:Request , res:Response):Promise<any> =>{
+    console.log("logout working")
+    try {
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
+      return res.status(200).json({ success:true , message: 'Logged out successfully' });
+    } catch (error) {
+      console.log(error)
+
+      return res.status(500)
+      .json({
+        success:false,
+        message:"something went wrong while logouting"
+      })
+    }
+  }
+  public getAllUsers = async (req: Request, res: Response): Promise<any> => {
+    try {
+      const loadAllUsers = await this.userService.loadAllUsers();
+      
+      // Convert the result to an array manually
+      const usersArray = Array.isArray(loadAllUsers) ? loadAllUsers : [loadAllUsers];
+  
+      return res.status(200).json({
+        success: true,
+        message: "Users loaded successfully",
+        data: usersArray, // Send the array of users
+      });
+  
+    } catch (error) {
+      console.error("Error loading users:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Error loading users",
+        error: error, // Send the error message
       });
     }
   };

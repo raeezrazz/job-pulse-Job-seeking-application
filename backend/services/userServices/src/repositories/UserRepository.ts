@@ -10,7 +10,6 @@ export class UserRepository {
   }
 
   public async findUserByEmail(email: string): Promise<IUser | null> {
-    console.log("!!! find user exist");
     const user = await User.findOne({ email }).lean();
     return user;
   }
@@ -31,12 +30,14 @@ export class UserRepository {
     }
   }
 
-  public async getUserData(email:string):Promise<any>{
+  public async getUserData(userId:string):Promise<any>{
     try{
-        const user = await User.findOne({email:email})
+        const user = await User.findOne({_id:userId})
+        console.log(user,"here is the user")
         if(!user){
              throw new Error('User not found')
         }
+
         return user
     }catch(error){
         console.log('userData getting failed',error)
@@ -88,6 +89,17 @@ export class UserRepository {
     } catch (error) {
       console.log("Error while updating User details", error);
       return false; 
+    }
+  }
+
+  public async loadUsers(): Promise<any[]> {
+    try {
+      const users = await User.find().select('-password');
+      console.log(users, "here are all the users");
+      return users;
+    } catch (error) {
+      console.error("Error fetching users from database:", error);
+      throw error;
     }
   }
   

@@ -2,10 +2,10 @@ import React, { useState, useEffect, ChangeEvent } from "react";
 import { useDispatch } from "react-redux";
 import "./LoginBody.css";
 import { useNavigate } from "react-router-dom";
-import { signUp, verifyOtp ,login } from "../../../api/userApi";
+import { signUp, verifyOtp, login } from "../../../api/userApi";
 import { resentOtp } from "../../../api/userApi";
 
-import apiClient from "../../../api/apiClient/axios";
+import apiClient from "../../../api/apiClient/userAxios";
 import { setCredentials } from "../../../store/slice/userSlice";
 
 const LoginBody = () => {
@@ -16,7 +16,7 @@ const LoginBody = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [count, setCount] = useState<number>(30);
 
-  const [loginPage, setLoginPage] = useState<boolean>(true);
+  const [loginPage, setLoginPage] = useState<boolean>(false);
   const [otpPage, setOtpPage] = useState<boolean>(false);
 
   const [emailError, setEmailError] = useState<String>("");
@@ -46,6 +46,7 @@ const LoginBody = () => {
   };
 
   const handleOtpVerification = async (e) => {
+    try{
     e.preventDefault();
     const response = await verifyOtp(otp.join(""), email);
     console.log(response, "herei sotp response");
@@ -53,6 +54,12 @@ const LoginBody = () => {
     navigate("/");
 
     // setOtpPage(false)
+    }catch(error){
+      console.log("bbbbb",error)
+      if(error?.response?.data?.invalidOtp){
+        alert("Entered Otp is wrong")
+      }
+    }
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>, index) => {
@@ -68,58 +75,56 @@ const LoginBody = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("here handling running")
+    console.log("here handling running");
     setEmailError("");
     setPasswordError("");
     setNameError("");
 
     if (!loginPage) {
-      let error = false
+      let error = false;
       if (email.trim() === "") {
         setEmailError("Please enter a valid Email");
-        error = true
+        error = true;
       }
       if (password.trim() === "") {
         setPasswordError("Please enter your password");
-        error = true
+        error = true;
       }
 
-      if(!error){
-        try {
-          const data={
-            email,
-            password
-          }
-          console.log("backend login req going")
-          const response = await login(data)
-          console.log("register response",response)
-          if(response.data.success){
-            localStorage.setItem(
-              "accessToken",
-              JSON.stringify(response.data.accessToken)
-            );
-            dispatch(setCredentials(response.data));
-            
-            navigate('/')
-          }else{
-          
-          }
+      if (!error) {
+  try {
+    const data = {
+      email,
+      password,
+    };
+    console.log("Sending login request to backend...");
 
-        } catch (error) {
-          console.log("Error Loging in:" , error)
-        }
-      }
+    const response = await login(data);
+    console.log("Login response:", response);
 
+    if (response.data.success) {
+      dispatch(setCredentials(response.data));
 
+      navigate("/");
+    } else {
+      console.log("Login failed:", response.data.message);
+    }
+  } catch (error) {
+    console.error("Error logging in:", error);
 
-
+    alert("Email or Password don't match");
+  }
+} else {
+  console.log("Validation error:", error.message);
+  alert("Please check your inputs and try again.");
+}
     } else {
       let errors = false;
       if (!validateName(name)) {
         setNameError(
           "Name must contain at least 3 characters and only letters."
         );
-        errors = true
+        errors = true;
       }
 
       if (!validateEmail(email)) {
@@ -145,9 +150,9 @@ const LoginBody = () => {
             password,
           };
           const response = await signUp(data);
-          console.log("register response came 33333333333333333",response)
+          console.log("register response came 33333333333333333", response);
           if (response.data.success) {
-            dispatch(setCredentials(response.data))
+            dispatch(setCredentials(response.data));
             localStorage.setItem(
               "accessToken",
               JSON.stringify(response.data.accessToken)
@@ -162,6 +167,11 @@ const LoginBody = () => {
           }
         } catch (error) {
           console.error("Error registering/logging in:", error);
+          if(error?.response?.data?.already){
+            alert("Entered Email address already Exist , Please login")
+          }else if(error?.response?.data?.already){
+
+          }
         }
       }
     }

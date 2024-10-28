@@ -1,6 +1,6 @@
 
-
-import apiClient from "./apiClient/axios";
+import adminClient from "./apiClient/adminAxios"
+import apiClient from "./apiClient/userAxios"
 
 interface LoginData {
     email:string,
@@ -9,5 +9,9 @@ interface LoginData {
 
 export const adminLogin =async(FormData:LoginData)=>{
     console.log("here reahed i admin login api")
-    return await apiClient.post('/admin/login',FormData)
+    return await adminClient.post('/admin/login',FormData)
+}
+
+export const loadUsers = async()=>{
+    return await apiClient.get('/user/loadUsers')
 }
