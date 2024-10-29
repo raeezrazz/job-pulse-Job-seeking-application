@@ -85,7 +85,7 @@ export class UserController {
           httpOnly: true,
           secure: true, // set true if using https
           maxAge: 15 * 60 * 1000, // 15 minutes
-        });
+        });+
 
         res.cookie('refreshToken', refreshToken, {
           httpOnly: true,
