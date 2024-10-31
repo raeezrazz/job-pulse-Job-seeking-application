@@ -286,7 +286,8 @@ function PackageManagementContent() {
       <Card className="bg-white shadow-md">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow> 
+              
               <TableHead className="text-gray-600">Name</TableHead>
               <TableHead className="text-gray-600">Price</TableHead>
               <TableHead className="text-gray-600">Users</TableHead>
