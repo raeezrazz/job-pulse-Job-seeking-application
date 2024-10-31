@@ -1,404 +1,181 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
-import { useDispatch } from "react-redux";
-import "./LoginBody.css";
-import { useNavigate } from "react-router-dom";
-import { signUp, verifyOtp, login } from "../../../api/userApi";
-import { resentOtp } from "../../../api/userApi";
+import React, { useState } from "react";
+import "./LoginBody.css"; // Ensure your CSS file has the necessary styles
+import { MdEmail ,MdAccountCircle , MdLogin, MdPersonAdd } from "react-icons/md";
+import { FcGoogle } from "react-icons/fc";
+import { IoIosLock } from "react-icons/io";
 
-import apiClient from "../../../api/apiClient/userAxios";
-import { setCredentials } from "../../../store/slice/userSlice";
-
-const LoginBody = () => {
-  const [name, setName] = useState<string>("");
+function LoginBody() {
+  const [isSignIn, setIsSignIn] = useState(true); // State to toggle between sign in and sign up
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [otp, setOtp] = useState(["", "", "", ""]);
-  const [count, setCount] = useState<number>(30);
+  const [username, setUsername] = useState<string>(""); // For signup
 
-  const [loginPage, setLoginPage] = useState<boolean>(false);
-  const [otpPage, setOtpPage] = useState<boolean>(false);
-
-  const [emailError, setEmailError] = useState<String>("");
-  const [passwordError, setPasswordError] = useState<String>("");
-  const [nameError, setNameError] = useState<String>("");
-  // const [otpError, setOtpError] = useState<String>("");
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePassword = (password: string): boolean => {
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    const check = passwordRegex.test(password);
-
-    return check;
-  };
-
-  const validateName = (name: string): boolean => {
-    const nameRegex = /^[a-zA-Z\s]+$/;
-    return name.trim().length >= 3 && nameRegex.test(name);
-  };
-
-  const handleOtpVerification = async (e) => {
-    try{
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await verifyOtp(otp.join(""), email);
-    console.log(response, "herei sotp response");
-    dispatch(setCredentials(response.data));
-    navigate("/");
-
-    // setOtpPage(false)
-    }catch(error){
-      console.log("bbbbb",error)
-      if(error?.response?.data?.invalidOtp){
-        alert("Entered Otp is wrong")
-      }
-    }
-  };
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>, index) => {
-    const newOtp = [...otp];
-    newOtp[index] = e.target.value;
-    setOtp(newOtp);
-
-    // Focus on the next input if the current input has a value
-    if (e.target.value && index < otp.length - 1) {
-      document.getElementById(`otp-${index + 1}`).focus();
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("here handling running");
-    setEmailError("");
-    setPasswordError("");
-    setNameError("");
-
-    if (!loginPage) {
-      let error = false;
-      if (email.trim() === "") {
-        setEmailError("Please enter a valid Email");
-        error = true;
-      }
-      if (password.trim() === "") {
-        setPasswordError("Please enter your password");
-        error = true;
-      }
-
-      if (!error) {
-  try {
-    const data = {
-      email,
-      password,
-    };
-    console.log("Sending login request to backend...");
-
-    const response = await login(data);
-    console.log("Login response:", response);
-
-    if (response.data.success) {
-      dispatch(setCredentials(response.data));
-
-      navigate("/");
+    if (isSignIn) {
+      // Handle login
+      console.log("Logging in with:", { email, password });
     } else {
-      console.log("Login failed:", response.data.message);
-    }
-  } catch (error) {
-    console.error("Error logging in:", error);
-
-    alert("Email or Password don't match");
-  }
-} else {
-  console.log("Validation error:", error.message);
-  alert("Please check your inputs and try again.");
-}
-    } else {
-      let errors = false;
-      if (!validateName(name)) {
-        setNameError(
-          "Name must contain at least 3 characters and only letters."
-        );
-        errors = true;
-      }
-
-      if (!validateEmail(email)) {
-        setEmailError("Please enter a valid email address.");
-        errors = true;
-      }
-      if (password !== confirmPassword) {
-        setPasswordError(
-          "Passwords do not match. Please ensure both passwords are identical."
-        );
-        errors = true;
-      } else if (!validatePassword(password)) {
-        setPasswordError(
-          "Password must be at least 8 characters long, with at least one uppercase letter, one lowercase letter, one number, and one special character."
-        );
-        errors = true;
-      }
-      if (!errors) {
-        try {
-          const data = {
-            name: !loginPage ? undefined : name,
-            email,
-            password,
-          };
-          const response = await signUp(data);
-          console.log("register response came 33333333333333333", response);
-          if (response.data.success) {
-            dispatch(setCredentials(response.data));
-            localStorage.setItem(
-              "accessToken",
-              JSON.stringify(response.data.accessToken)
-            );
-
-            setOtpPage(true);
-            setCount(30);
-          } else if (response.data.already) {
-            setEmailError("This Email already exist, please login");
-          } else {
-            console.error(response.data.message || "Registration failed.");
-          }
-        } catch (error) {
-          console.error("Error registering/logging in:", error);
-          if(error?.response?.data?.already){
-            alert("Entered Email address already Exist , Please login")
-          }else if(error?.response?.data?.already){
-
-          }
-        }
-      }
+      // Handle signup
+      console.log("Signing up with:", { username, email, password });
     }
   };
+  const [isSwapped, setIsSwapped] = useState(false);
 
-  const resendOtp = async () => {
-    setCount(30);
-    const response = await resentOtp(email);
-
-    console.log(response, "----------------------");
+  const toggleSwap = () => {
+    setIsSwapped((prev) => !prev); // Toggle swap state
   };
-
-  useEffect(() => {
-    // setEmailError("");
-    // setNameError("");
-    // setPasswordError("");
-    if (count > 0) {
-      const timer = setInterval(() => {
-        setCount((prevCount) => prevCount - 1);
-      }, 1000);
-
-      return () => clearInterval(timer);
-    }
-  }, [count]);
 
   return (
-    <div className="bg-white flex justify-center items-center h-screen">
-      {/* Left: Image */}
-      <div className="w-1/2 h-screen hidden lg:block">
-        <img
-          src="./wallpaperflare.com_wallpaper.jpg"
-          className="object-cover w-full h-full"
+    <div className="flex min-h-screen bg-gray-100">
+    {/* Left Side: Background Section */}
+    <div
+  className={`w-full sm:w-3/6 flex items-center justify-start bg-gray-500 text-white p-6 sm:p-8 shadow-lg transition-transform duration-500 ${isSwapped ? 'translate-x-full' : ''}`}
+  onClick={toggleSwap} // Click to swap
+>
+  <div className="flex flex-col items-start w-full sm:w-2/3">
+    {/* Conditional Rendering Based on isSignIn State */}
+    {isSwapped ? (
+      <>
+        <h2 className="text-4xl sm:text-5xl font-bold mb-4 drop-shadow-lg">Welcome Back to JobPulse</h2>
+        <p className="text-base sm:text-lg mb-6 text-gray-300">Log in to continue your job search or manage your applications!</p>
+        <button
+          onClick={() => setIsSignIn(false)} // Switch to Sign Up
+          className="mt-4 bg-blue-700 hover:bg-blue-600 text-white font-semibold rounded-full py-2 px-6 shadow-md transition-all duration-300 transform hover:scale-105"
+        >
+          Sign Up
+        </button>
+      </>
+    ) : (
+      <>
+        <h2 className="text-4xl sm:text-5xl font-bold mb-4 drop-shadow-lg">Join JobPulse Today</h2>
+        <p className="text-base sm:text-lg mb-6 text-gray-300">Create an account to find your perfect job or candidate!</p>
+        <button
+          onClick={() => setIsSignIn(true)} // Switch to Sign In
+          className="mt-4 bg-blue-700 hover:bg-blue-600 text-white font-semibold rounded-full py-2 px-6 shadow-md transition-all duration-300 transform hover:scale-105"
+        >
+          Sign In
+        </button>
+      </>
+    )}
+  </div>
+</div>
+
+
+  
+    {/* Right Side: Login Form */}
+    <div
+  className={`w-full lg:w-3/6 flex items-center justify-center lg:p-24 p-6 bg-white shadow-md rounded-lg transition-transform duration-500 ${isSwapped ? '-translate-x-full' : ''}`}
+  onClick={toggleSwap} // Click to swap
+>
+  <div className="w-full max-w-xs">
+    <div className="text-center mb-6">
+      <h1 className="text-3xl font-bold tracking-tight text-gray-900">{isSwapped ? "JobPulse " : "JobPulse "}</h1>
+    </div>
+
+    <form onSubmit={handleSubmit}>
+      {/* Conditional Rendering of Fields */}
+      {!isSwapped && ( // Show username field only for signup
+        <div className="flex items-center border-b border-gray-300 py-1.5 mb-3">
+          <MdAccountCircle className="text-gray-500 w-5 h-5 mr-2" />
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Username"
+            className="w-full bg-transparent focus:outline-none text-gray-700 placeholder-gray-400 text-sm"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            autoComplete="off"
+            required // Added required attribute
+          />
+        </div>
+      )}
+
+      {/* Email Input */}
+      <div className="flex items-center border-b border-gray-300 py-1.5 mb-3">
+        <MdEmail className="text-gray-500 w-5 h-5 mr-2" />
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Email"
+          className="w-full bg-transparent focus:outline-none text-gray-700 placeholder-gray-400 text-sm"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete="on"
+          required // Added required attribute
         />
       </div>
 
-      {/* Right: Login Form */}
-      {!otpPage ? (
-        <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
-          {loginPage ? (
-            <h1 className="text-2xl font-semibold mb-4">Sign Up</h1>
-          ) : (
-            <h1 className="text-2xl font-semibold mb-4">Sign In</h1>
-          )}
+      {/* Password Input */}
+      <div className="flex items-center border-b border-gray-300 py-1.5 mb-3">
+        <IoIosLock className="text-gray-500 w-5 h-5 mr-2" />
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Password"
+          className="w-full bg-transparent focus:outline-none text-gray-700 placeholder-gray-400 text-sm"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="off"
+          required // Added required attribute
+        />
+      </div>
 
-          <form onSubmit={handleSubmit}>
-            {/* Username Input */}
-            {loginPage ? (
-              <>
-                <p className="text-red-500"> {nameError} </p>
-                <div className="mb-4">
-                  <label htmlFor="username" className="block text-gray-600">
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    autoComplete="off"
-                  />
-                </div>
-              </>
-            ) : (
-              <></>
-            )}
-            <p className="text-red-500"> {emailError} </p>
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-gray-600">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="off"
-              />
-            </div>
+      {/* Bottom Section */}
+      <div className={`flex justify-between items-center mb-4`}>
+        {/* Display Forgot Password only when in Login Mode */}
+        {isSwapped && (
+          <a
+            href="#"
+            className="text-xs font-semibold text-blue-700 hover:underline"
+            onClick={() => setIsSignIn(true)}
+          >
+            Forgot Password?
+          </a>
+        )}
+      </div> 
+          <div className="text-center">
+      <button
+        type="submit"
+        className={`bg-blue-700 hover:bg-blue-600 text-white font-semibold rounded-full py-2 px-6 text-sm  transition-transform duration-200 transform hover:scale-105 shadow-lg ${isSwapped && 'mt-1'}`}
+      >
+        {isSwapped ? (
+          <>
+            <MdLogin className="inline-block mr-1" /> {/* Add an icon for login */}
+            Login
+          </>
+        ) : (
+          <>
+            <MdPersonAdd className="inline-block mr-1" /> {/* Add an icon for sign up */}
+            Sign Up
+          </>
+        )}
+      </button>
+      </div>
+    </form>
 
-            {/* Password Input */}
-            <p className="text-red-500"> {passwordError} </p>
+    {/* Google Button Section */}
+    <div className="flex items-center justify-center mt-4">
+  <button className="flex items-center bg-transparent border border-gray-100 hover:bg-red-500 text-gray-800 font-semibold rounded-full py-2 px-4 text-sm transition-transform duration-200 shadow-lg">
+    <FcGoogle className="w-5 h-5 mr-2" /> {/* Google icon */}
+    Continue with Google
+  </button>
+</div>
 
-            <div className="mb-4">
-              <label htmlFor="password" className="block text-gray-800">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="off"
-              />
-            </div>
-            {!loginPage ? (
-              <div className="mb-6 text-blue-500">
-                <a href="#" className="hover:underline">
-                  Forgot Password?
-                </a>
-              </div>
-            ) : (
-              <div className="mb-4">
-                <label htmlFor="password" className="block text-gray-800">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  id="confirmpassword"
-                  name="confirmpassword"
-                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  autoComplete="off"
-                />
-              </div>
-            )}
+  </div>
+</div>
 
-            {/* Login Button */}
-            <button
-              type="submit"
-              className="bg-red-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full"
-            >
-              {loginPage ? <p>Register</p> : <p>Login</p>}
-            </button>
-          </form>
 
-          {/* Sign up Link */}
-          {loginPage ? (
-            <div className="mt-6 text-black-500 text-center">
-              Already have an account?{" "}
-              <button
-                onClick={() => setLoginPage(false)}
-                className="hover:underline text-blue-500"
-              >
-                Sign In Here
-              </button>
-            </div>
-          ) : (
-            <div className="mt-6 text-black-500 text-center">
-              Dont have an account?{" "}
-              <button
-                onClick={() => setLoginPage(true)}
-                className="hover:underline text-blue-500"
-              >
-                Sign Up Here
-              </button>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
-          <h1 className="text-2xl font-semibold mb-4">Verify Otp</h1>
+  </div>
+  
 
-          <form onSubmit={handleOtpVerification}>
-            <p className="text-red-500"> {emailError} </p>
-
-            {/* Password Input */}
-            <p className="text-red-500"> {passwordError} </p>
-
-            <p className="text-red-500 text-sm md:text-base mb-4  font-semibold">
-              An OTP has been sent to your email. Please enter the OTP below to
-              verify your account:
-            </p>
-            <div className="flex justify-center space-x-8 mb-4">
-              {otp.map((digit, index) => (
-                <input
-                  key={index}
-                  type="number" // Keep the type as number
-                  id={`otp-${index}`}
-                  name={`otp-${index}`}
-                  maxLength="1" // Limit to one character
-                  className="w-12 h-12 border border-gray-400 rounded-md text-center focus:outline-none focus:border-blue-500 no-arrows" // Add a custom class
-                  value={digit}
-                  onChange={(e) => handleChange(e, index)}
-                  autoComplete="off"
-                />
-              ))}
-            </div>
-
-            {/* Login Button */}
-            <button
-              type="submit"
-              className="bg-red-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full"
-              // disabled={otp.every(digit => digit === "")}
-            >
-              <p>Verify Otp</p>
-            </button>
-          </form>
-
-          {/* Sign up Link */}
-
-          <div className="mt-6 text-black-500 text-center">
-            <p>If you did not receive the OTP,</p>
-
-            <button
-              onClick={resendOtp}
-              disabled={count > 0}
-              className={`hover:underline text-blue-500 ${
-                count > 0 ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-            >
-              Resend OTP
-            </button>
-            <a className="btn"> in : {count} sec</a>
-          </div>
-          <div className="mt-5 text-center">
-            <p className={""}>
-              Back to{" "}
-              <a
-                onClick={() => setOtpPage(false)}
-                href=""
-                className={"text-blue-500 hover:underline"}
-              >
-                Sign Up
-              </a>{" "}
-            </p>
-          </div>
-        </div>
-      )}
-    </div>
+    
+     
+    
   );
-};
+}
 
 export default LoginBody;

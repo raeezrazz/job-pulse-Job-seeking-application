@@ -1,9 +1,42 @@
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+/* LoginBody.css */
+.flex {
+    display: flex;
+  }
+  
+  .transition-transform {
+    transition: transform 0.5s ease; /* Smooth transition */
+  }
+  
+  /* Additional styles if needed */
+  /* src/BoxSwitcher.css */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height of the viewport */
 }
 
-input[type="number"] {
-    -moz-appearance: textfield; /* For Firefox */
+.box {
+    width: 100px;
+    height: 100px;
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    color: white;
+    background-color: blue;
+    transition: transform 0.5s ease; /* Smooth transition for transformation */
+}
+
+.box1 {
+    background-color: blue;
+}
+
+.box2 {
+    background-color: green;
+}
+
+.swapped {
+    transform: translateX(100%); /* Move the box to the right when swapped */
 }
