@@ -3,27 +3,63 @@ import "./LoginBody.css"; // Ensure your CSS file has the necessary styles
 import { MdEmail ,MdAccountCircle , MdLogin, MdPersonAdd } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 import { IoIosLock } from "react-icons/io";
+import { validateEmail,validateName ,validatePassword } from "../../../utils/validations/validation";
+import { login } from "../../../api/userApi";
+
 
 function LoginBody() {
-  const [isSignIn, setIsSignIn] = useState(true); // State to toggle between sign in and sign up
+  const [isSwapped, setIsSwapped] = useState(false);
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [username, setUsername] = useState<string>(""); // For signup
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [errorMessage, setErrorMessage] = useState("");
+  const [shake, setShake] = useState(false);
+  
+
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
-    if (isSignIn) {
-      // Handle login
-      console.log("Logging in with:", { email, password });
+    setErrorMessage('');
+  
+    if (isSwapped) {
+      if (password.trim() === '') {
+        setErrorMessage("Enter a valid Password");
+        
+        // Reset shake animation
+        setShake(false);
+        setTimeout(() => setShake(true), 1); // Add a slight delay to trigger shake again
+      }else if(!validateEmail(email)){
+        setErrorMessage("Please Enter a Valid Email")
+       
+        setShake(false);
+        setTimeout(() => setShake(true), 1); 
+      }else{
+        setErrorMessage('');
+        const data = {
+          email,
+          password,
+        };
+        console.log("Sending login request to backend...");
+        try{
+        const response = await login(data);
+        console.log("here the resspaiadskfsadadsgalsjdgngaljs")
+        console.log("Login response:", response);
+
+        }catch(error){
+          console.log("error happeninig",error)
+        }
+       
+      }
+
+
     } else {
-      // Handle signup
       console.log("Signing up with:", { username, email, password });
     }
   };
-  const [isSwapped, setIsSwapped] = useState(false);
 
   const toggleSwap = () => {
-    setIsSwapped((prev) => !prev); // Toggle swap state
+    setIsSwapped((prev) => !prev);
   };
 
   return (
@@ -31,7 +67,7 @@ function LoginBody() {
     {/* Left Side: Background Section */}
     <div
   className={`w-full sm:w-3/6 flex items-center justify-start bg-gray-500 text-white p-6 sm:p-8 shadow-lg transition-transform duration-500 ${isSwapped ? 'translate-x-full' : ''}`}
-  onClick={toggleSwap} // Click to swap
+   // Click to swap
 >
   <div className="flex flex-col items-start w-full sm:w-2/3">
     {/* Conditional Rendering Based on isSignIn State */}
@@ -40,7 +76,7 @@ function LoginBody() {
         <h2 className="text-4xl sm:text-5xl font-bold mb-4 drop-shadow-lg">Welcome Back to JobPulse</h2>
         <p className="text-base sm:text-lg mb-6 text-gray-300">Log in to continue your job search or manage your applications!</p>
         <button
-          onClick={() => setIsSignIn(false)} // Switch to Sign Up
+          onClick={toggleSwap} // Switch to Sign Up
           className="mt-4 bg-blue-700 hover:bg-blue-600 text-white font-semibold rounded-full py-2 px-6 shadow-md transition-all duration-300 transform hover:scale-105"
         >
           Sign Up
@@ -51,7 +87,7 @@ function LoginBody() {
         <h2 className="text-4xl sm:text-5xl font-bold mb-4 drop-shadow-lg">Join JobPulse Today</h2>
         <p className="text-base sm:text-lg mb-6 text-gray-300">Create an account to find your perfect job or candidate!</p>
         <button
-          onClick={() => setIsSignIn(true)} // Switch to Sign In
+          onClick={toggleSwap} // Switch to Sign In
           className="mt-4 bg-blue-700 hover:bg-blue-600 text-white font-semibold rounded-full py-2 px-6 shadow-md transition-all duration-300 transform hover:scale-105"
         >
           Sign In
@@ -66,12 +102,17 @@ function LoginBody() {
     {/* Right Side: Login Form */}
     <div
   className={`w-full lg:w-3/6 flex items-center justify-center lg:p-24 p-6 bg-white shadow-md rounded-lg transition-transform duration-500 ${isSwapped ? '-translate-x-full' : ''}`}
-  onClick={toggleSwap} // Click to swap
+ // Click to swap
 >
   <div className="w-full max-w-xs">
     <div className="text-center mb-6">
       <h1 className="text-3xl font-bold tracking-tight text-gray-900">{isSwapped ? "JobPulse " : "JobPulse "}</h1>
     </div>
+    {shake  && <p className={`text-red-500 text-xs ${errorMessage && 'animate-shake'}`}>
+  {errorMessage}
+</p>}
+    
+
 
     <form onSubmit={handleSubmit}>
       {/* Conditional Rendering of Fields */}
@@ -131,7 +172,7 @@ function LoginBody() {
           <a
             href="#"
             className="text-xs font-semibold text-blue-700 hover:underline"
-            onClick={() => setIsSignIn(true)}
+           
           >
             Forgot Password?
           </a>

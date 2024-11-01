@@ -17,17 +17,18 @@ export class UserController {
       const { email, password } = req.body;
   
       // Attempt to log in the user using the userService
-      const { userData, accessToken, refreshToken } = await this.userService.login(email, password);
-  
-      if (!userData) {
+      const result = await this.userService.login(email, password);
+      console.log("hererere",result)
+      if (!result?.success) {
+        console.log("inside")
         return res.status(401).json({
           success: false,
-          message: "Invalid email or password",
+          message:result?.message,
         });
       }
-  
+      console.log("end")
       // Set the refresh token as a secure HTTP-only cookie
-      res.cookie("jwt-refresh", refreshToken, {
+      res.cookie("jwt-refresh", result.refreshToken, {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
@@ -35,16 +36,16 @@ export class UserController {
       });
   
       // Set the access token as a secure HTTP-only cookie
-      res.cookie("accessToken", accessToken, {
+      res.cookie("accessToken", result?.accessToken, {
         httpOnly: true,
-        secure: true, // Enable this if using HTTPS
-        maxAge: 15 * 60 * 1000, // Expires in 15 minutes
+        secure: true,
+        maxAge: 15 * 60 * 1000,
       });
   
       // Send a successful response
       return res.status(200).json({
         success: true,
-        data: userData,
+        data: result.userData,
         message: "User login successful",
       });
     } catch (error) {

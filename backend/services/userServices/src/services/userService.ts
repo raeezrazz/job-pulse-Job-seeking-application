@@ -6,6 +6,15 @@ import {IUser ,IUpdatedUser}from "../interfaces/IUser";
 import bcrypt from "bcryptjs"; 
 import { generateAccessToken,generateRefreshToken , decodeAccessTokenData } from '../utils/jwt/generateToken';
 
+type SignInResult = {
+  success: boolean;
+  message: string;
+  accessToken?: string;
+  refreshToken?: string;
+  userData?: object
+};
+
+
 export class UserService {
 
     private userRepository:UserRepository
@@ -30,18 +39,18 @@ export class UserService {
       return newRefreshToken;
     }
 
-    async login(email: string, enteredPassword: string): Promise<{ userData: any; accessToken: string; refreshToken: string }> {
+    async login(email: string, enteredPassword: string): Promise<SignInResult | undefined> {
       const user = await this.userRepository.findUserByEmail(email);
     
       // Check if user exists
       if (!user) {
-        throw new Error("Invalid email or password");
+        return {success:false , message:"User not found"}
       }
     
       // Verify the password
       const isPasswordMatch = await bcrypt.compare(enteredPassword, user.password ?? '');
       if (!isPasswordMatch) {
-        throw new Error("Invalid email or password");
+        return {success:false , message:"passsword Don't match"}
       }
     
       // Generate tokens
@@ -54,6 +63,8 @@ export class UserService {
     
       // Return user data, accessToken, and refreshToken
       return {
+        success:true,
+        message:'User Login Successfull',
         userData: userWithoutPassword,
         accessToken,
         refreshToken,
