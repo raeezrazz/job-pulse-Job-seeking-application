@@ -318,3 +318,70 @@ function PackageManagementContent() {
     </div>
   )
 }
+
+
+
+//   map
+
+import React from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Import marker image directly
+import markerIconPng from 'leaflet/dist/images/marker-icon.png';
+
+const icon = new L.Icon({
+  iconUrl: markerIconPng,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+function HeroSection() {
+  const jobLocations = [
+    { id: 1, position: [34.0522, -118.2437], job: 'Driver Needed' },
+    { id: 2, position: [34.0522, -118.2537], job: 'Delivery Boy Needed' },
+    { id: 3, position: [34.0622, -118.2437], job: 'Coconut Cutter Needed' },
+  ];
+
+  return (
+    <div className='m-8 bg-gray-800 rounded-lg p-6 flex flex-col md:flex-row items-center text-center md:text-left'>
+      <div className='w-full md:w-1/2 mb-4 md:mb-0'>
+        <h1 className='text-3xl font-bold text-white mb-4'>Welcome to JobPulse!</h1>
+        <p className='text-lg text-white mb-4'>
+          JobPulse is your go-to platform for finding and offering short-term jobs in your community.
+          Whether you need a driver for a day or are looking for temporary work as a delivery person or coconut cutter, 
+          we connect you with the right people quickly and easily.
+        </p>
+        <p className='text-lg text-white mb-4'>
+          Post your job requests or browse available opportunities today and join our growing community!
+        </p>
+        <a 
+          href="#post-job"
+          className='bg-white text-green-500 font-semibold px-6 py-2 rounded shadow hover:bg-gray-200 transition duration-300'
+        >
+          Get Started
+        </a>
+      </div>
+      
+      {/* Map Container */}
+      <div className="w-full md:w-1/2 h-[400px] mt-6 md:mt-0">
+        <MapContainer center={[34.0522, -118.2437]} zoom={13} style={{ height: '100%', width: '100%' }}>
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          />
+          {jobLocations.map((location) => (
+            <Marker key={location.id} position={location.position} icon={icon}>
+              <Popup>{location.job}</Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      </div>
+    </div>
+  );
+}
+
+export default HeroSection;

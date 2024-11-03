@@ -17,7 +17,7 @@ export default function Header() {
 
 
   return (
-    <header className="sticky top-0 z-10 px-4 lg:px-6 h-14 flex items-center bg-white shadow-sm">
+    <header className="sticky top-0 z-10 px-4 lg:px-6 h-16 flex items-center bg-white shadow-lg">
       {/* <button onClick={()=> getUserData()}>get user</button> */}
       <a className="flex items-center justify-center" href="#">
         <MapPin className="h-6 w-6" />
