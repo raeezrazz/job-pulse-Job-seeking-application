@@ -16,7 +16,7 @@ function HeroSection() {
         Post your job requests or browse available opportunities today and join our growing community!
       </p>
       <a 
-        href="#post-job" // Link to the job posting section
+        href="#post-job" // Link to the job pgit addosting section
         className='bg-white text-green-500 font-semibold px-6 py-2 rounded shadow hover:bg-gray-200 transition duration-300'
       >
         Get Started
