@@ -7,9 +7,9 @@ export interface UserUpdateForm {
 }
 
 export interface SignUpFormData {
-    name: string;
     email: string;
-    password: string
+  password: string;
+  username?: string;
 }
 export interface LoginFormData {
     email : string;

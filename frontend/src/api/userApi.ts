@@ -21,11 +21,14 @@ export const verifyOtp = async(otp:number, email:string)=>{
 export const getUserData = async()=>{
     return await apiClient.get('user/getUserData',{withCredentials:true})
 }
+export const dummy = async()=>{
+    return await apiClient.get('user/dummy',{withCredentials:true})
+}
 export const changePassword = async(email:string |any ,oldPassword:string , newPassword:string)=>{
     return await apiClient.patch('/user/changePassword',{email ,oldPassword,newPassword})
 }
 export const updateUserDetails = async(userData:UserUpdateForm)=>{
-    return await apiClient.patch('/user/updateUser',{userData})
+    return await apiClient.patch('/user/updateUser',{userData}) 
 }
 
 export const logoutUser = async()=>{

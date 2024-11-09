@@ -5,7 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { IoIosLock } from "react-icons/io";
 import { validateEmail, validateName, validatePassword } from "../../../utils/validations/validation";
 import useIsMediumScreen from "../../hooks/UseIsMediumScreen";
-import { login, signUp } from "../../../api/userApi";
+import { login, signUp,dummy } from "../../../api/userApi";
 import { motion } from "framer-motion";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -20,7 +20,6 @@ const SignupSchema = Yup.object().shape({
   username: Yup.string()
     .min(3, "Username must be at least 3 characters")
     .max(20, "Username cannot exceed 20 characters")
-    .matches(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores")
     .required("Username is required"),
   email: Yup.string().email("Invalid email format").required("Email is required"),
   password: Yup.string()
@@ -34,6 +33,7 @@ const SignupSchema = Yup.object().shape({
 
 function LoginBody() {
   const [isLoginPage, setisLoginPage] = useState(false);
+  const [isOtpPage , setOtpPage] = useState(true)
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [shake, setShake] = useState(false);
@@ -52,9 +52,18 @@ function LoginBody() {
 
     try {
       if (isLoginPage) {
+        console.log("here inside this login is working",values)
         await login(values.email, values.password);
       } else {
-        await signUp(values.username!, values.email, values.password);
+        console.log("here inside this signUp is working",values)
+
+        const response = await signUp(values);
+        console.log("here is the respond of signUp", response)
+
+        if(response.data.success){
+
+        }
+
       }
     } catch (error) {
       setErrorMessage("Login or signup failed. Please try again.");
@@ -64,6 +73,10 @@ function LoginBody() {
       setIsLoading(false);
     }
   };
+  async function js(){
+    console.log("dummt is ")
+    await dummy()
+  }
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
@@ -101,7 +114,15 @@ function LoginBody() {
 
       {/* Right Side: Login Form */}
       <div className={`w-full md:w-3/6 flex items-center  justify-center lg:p-24 p-6 bg-white shadow-md rounded-lg transition-transform duration-500 ${isLoginPage ? "-translate-x-full" : ""}`}>
-        <motion.div
+        
+        {isOtpPage ?(<>
+          <div className="w-full max-w-xs ">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">JobPulse</h1>
+          </div>
+          </div>
+        </>):(
+         <motion.div
           key={isLoginPage}
           animate={{ fontSize: "50px" }}
           transition={{ duration: 1 }}
@@ -194,7 +215,8 @@ function LoginBody() {
               Sign in with Google
             </button>
           </div>
-        </motion.div>
+        </motion.div>)}
+       
       </div>
     </div>
   );
