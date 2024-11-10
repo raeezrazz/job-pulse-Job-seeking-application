@@ -1,10 +1,9 @@
 import { User } from "../schema/User";
-import {IUser,IUpdatedUser} from "../interfaces/IUser";
+import {IUser,IUpdatedUser} from "../interfaces/userTypes";
 
 export class UserRepository {
   public async createUser(userData: IUser): Promise<IUser> {
     const user = new User(userData);
-    console.log("userData:vdsz", userData);
     const savedUser = user.save();
     return savedUser;
   }
@@ -74,7 +73,7 @@ export class UserRepository {
       }
   
       // Update the user fields
-      user.name = newUserDetails.name || user.name; 
+      user.username = newUserDetails.username || user.username; 
       user.dob = newUserDetails.dob || user.dob;  
       user.bio = newUserDetails.bio || user.bio;   
       user.phone = newUserDetails.phone || user.phone;   

@@ -20,16 +20,15 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.15",
     "react-redux": "^9.1.2"
-  },
-  "devDependencies": {
+  },"devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
+    "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^22.7.4",
     "@types/nodemailer": "^6.4.16"
   }
-}
+}  

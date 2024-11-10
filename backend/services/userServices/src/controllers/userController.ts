@@ -1,7 +1,8 @@
-import {IUser,IUpdatedUser} from "../interfaces/IUser";
+import {IUser,IUpdatedUser} from "../interfaces/userTypes";
 import { UserService } from "./../services/userService";
 import { Request, Response } from "express";
 import { OtpService } from "../services/otpService";
+import { RegisterUserDTO } from "../interfaces/userTypesDTO";
 
 export class UserController {
   private userService: UserService;
@@ -16,7 +17,6 @@ export class UserController {
     try {
       const { email, password } = req.body;
   
-      // Attempt to log in the user using the userService
       const result = await this.userService.login(email, password);
       console.log("hererere",result)
       if (!result?.success) {
@@ -66,27 +66,17 @@ export class UserController {
 
   public registerUser = async (req: Request, res: Response): Promise<any> => {
     console.log("here reacjed in register", req.body);
+     const data:RegisterUserDTO = req.body
+
     try {
-      const { name, email, password } = req.body;
-
-      const userExists = await this.userService.userExist(email);
-      if (userExists) {
-        console.log("email already")
-        return res
-          .status(400)
-          .json({ already: true, message: "user already exist" });
-      }
-
-      //  const form:IUser = { name,email,password }
-
-      const form: IUser = { name, email, password } as IUser;
       const { user, accessToken, refreshToken } =
-        await this.userService.registerUser(form);
+        await this.userService.registerUser(data);
+
         res.cookie('accessToken', accessToken, {
           httpOnly: true,
           secure: true, // set true if using https
           maxAge: 15 * 60 * 1000, // 15 minutes
-        });+
+        });
 
         res.cookie('refreshToken', refreshToken, {
           httpOnly: true,
@@ -94,7 +84,7 @@ export class UserController {
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
 
-      this.otpService.sendMail(email);
+      this.otpService.sendMail(data.email);
       console.log("ere is the user info data stored in the backend", user);
       return res.status(201).json({
         success: true,

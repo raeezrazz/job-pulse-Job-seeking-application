@@ -1,9 +1,9 @@
 import mongoose , {Schema} from "mongoose"
-import {IUser} from "../interfaces/IUser"
+import {IUser} from "../interfaces/userTypes"
 
 
 const UserSchema : Schema = new Schema({
-    name :{
+    username :{
         type: String,
         required: true
     },

@@ -2,9 +2,11 @@ import { changePassword, updateUserDetails } from './../../../../../frontend/src
 import { OtpRepository } from './../repositories/OtpRepository';
 import { UserRepository } from './../repositories/UserRepository';
 
-import {IUser ,IUpdatedUser}from "../interfaces/IUser";
+import {IUser ,IUpdatedUser}from "../interfaces/userTypes";
 import bcrypt from "bcryptjs"; 
 import { generateAccessToken,generateRefreshToken , decodeAccessTokenData } from '../utils/jwt/generateToken';
+import { RegisterUserDTO } from '../interfaces/userTypesDTO';
+import { hashPassword } from '../utils/bcrypt/passwordHash';
 
 type SignInResult = {
   success: boolean;
@@ -71,27 +73,35 @@ export class UserService {
       };
     }
 
-    async registerUser(userData: IUser): Promise<{user:IUser; accessToken:string; refreshToken : string}>{
-        console.log("UserService reached for registering",userData)
-        const user = userData
-
-        const hashedPassword = await bcrypt.hash(userData.password ?? '',10)
-        const userToCreate = {...userData , password : hashedPassword}
-
-        console.log(hashedPassword,userToCreate)
-
-        const newUser = await this.userRepository.createUser(userToCreate as IUser)
-        console.log(newUser,"jaoivcx")
-
-        const userId:string = newUser._id.toString()
-        const accessToken = generateAccessToken(userId)
-        const refreshToken = generateRefreshToken(userId)
-        console.log(accessToken,refreshToken,"ausof")
-
-        const {password, ...userWithoutPassword} = newUser.toObject();
-
-        return {user:userWithoutPassword,accessToken , refreshToken}
+    async registerUser(userData: RegisterUserDTO): Promise<{user: IUser; accessToken: string; refreshToken: string}> {
+      const { username, email, password } = userData;
+    
+      const existUser = await this.userRepository.findUserByEmail(email);
+      if (existUser) {
+        throw new Error('User with email already exists');
+      }
+    
+      const hashedPassword = await hashPassword(password);
+    
+      const userToCreate = { ...userData, password: hashedPassword };
+    
+      console.log(hashedPassword, userToCreate);
+    
+      const newUser = await this.userRepository.createUser(userToCreate as IUser);
+      console.log(newUser, 'new user created');
+    
+      const userId: string = newUser._id.toString();
+      const accessToken = generateAccessToken(userId);
+      const refreshToken = generateRefreshToken(userId);
+    
+      console.log(accessToken, refreshToken, 'tokens generated');
+    
+      const userWithoutPassword = newUser.toObject();
+      const { password: hashedPasswordFromDb, ...userWithoutPasswordDetails } = userWithoutPassword;
+    
+      return { user: userWithoutPasswordDetails, accessToken, refreshToken };
     }
+    
 
     async verifyUser(email:string):Promise<any>{
         const verifiedUser = await this.userRepository.verifyUserUpdate(email)  

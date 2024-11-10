@@ -4,6 +4,8 @@ import { ObjectId } from "mongoose";
 import { IOtp } from "../interfaces/IOtp";
 import { UserRepository } from "../repositories/UserRepository";
 import { OtpRepository } from "../repositories/OtpRepository";
+import { generateOtp } from "../utils/otp/generateOtp";
+import { hashOtp , compareOtp } from "../utils/otp/hashOtp";
 
 export class OtpService {
     private otpRepository: OtpRepository;
@@ -35,7 +37,7 @@ export class OtpService {
 
         try {
             console.log("otp verification email",process.env.NODEMAILER_USERNAME,process.env.NODEMAILER_PASSWORD)
-            const otp = `${Math.floor(3000 + Math.random() * 900)}`;
+            const otp = generateOtp()
             console.log(otp,"hgsha")
 
             const mailOptions = {
@@ -56,9 +58,10 @@ export class OtpService {
             </html>`,
             };
 
-            const saltRound = 10;
-            const hashedOtp = await bcrypt.hash(otp, saltRound);
-
+            const hashedOtp =await hashOtp(otp);
+            if(!hashedOtp){
+                 throw new Error('Failed to generate new Otp')
+            }
             const otpData: IOtp = {
                 email,
                 otp:hashedOtp
@@ -84,7 +87,7 @@ export class OtpService {
             console.log("otp not exist")
             return false
         }
-        const validateOtp = await bcrypt.compare(otp,otpExist.otp)
+        const validateOtp = await compareOtp(otp,otpExist.otp)
         console.log(validateOtp)
         if(validateOtp){
             await this.otpRepository.removeOtp(email)

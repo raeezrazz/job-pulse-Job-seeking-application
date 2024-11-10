@@ -2,7 +2,7 @@ import { Document,ObjectId } from "mongoose";
 
 export  interface IUser extends Document{
     _id: ObjectId;
-    name: string;
+    username: string;
     email:string;
     password?:string;
     phone?:Number;
@@ -14,7 +14,7 @@ export  interface IUser extends Document{
 }
 
 export  interface IUpdatedUser extends Document{
-    name:string;
+    username:string;
     email:string;
     image?:string,
     dob?:Date,

@@ -1,48 +1,78 @@
-import cookieParser from 'cookie-parser';
-import cors  from 'cors';
+import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
-import express  from 'express';
-import {createProxyMiddleware} from 'http-proxy-middleware'
-
-const app = express()
+import cors from 'cors';
+import axios from 'axios';
 
 dotenv.config();
-const PORT = process.env.API_GATEWAY_PORT
 
-const endpoints ={
-    user:process.env.USER_API_BASE_URL,
-    admin:process.env.ADMIN_API_BASE_URL
-}
+const app = express();
+const PORT = process.env.API_GATEWAY_PORT || 5000;
+
+const endpoints = {
+  user: process.env.USER_API_BASE_URL,
+  admin: process.env.ADMIN_API_BASE_URL ,
+};
+
+app.use(cors({
+  origin: 'http://localhost:5173', 
+  credentials: true,
+}));
 
 app.use(express.json());
-app.use(cors())
-// app.use(cookieParser())
-const sam = ()=>{
-    console.log("anj")
-}
 
+app.all('/user/*', async (req: Request, res: Response) => {
+  try {
+    console.log("here its woriking")
+    const targetUrl = `${endpoints.user}${req.path.replace('/user', '')}`;
 
+    const response = await axios({
+      method: req.method as 'GET' | 'POST' | 'PUT' | 'DELETE', 
+      url: targetUrl,
+      data: req.body,  
+      headers: req.headers,  
+      params: req.query, 
+      timeout: 30000,
+    });
 
-app.use('/user',createProxyMiddleware({
-    target:'http://localhost:5001',
-    changeOrigin:true,
-    pathRewrite: {
-        '^/user': '/', // This will rewrite '/user' to '/' when forwarding to the user service
-    },
-}))
+      res.status(response.status).send(response.data);
 
-app.use('/admin',createProxyMiddleware({
-    target:endpoints.admin,
-    changeOrigin:true
-}))
-// app.use('/user',(req,res,next)=>{
-//     console.log(req.url);
-//     next();
-    
-// })
+  } catch (error: any) {
+    console.error('Error in /user/* proxy route:', error.message || error);
 
+    if (error.response) {
+      res.status(error.response.status).send(error.response.data);
+    } else {
+      res.status(500).send('Internal Server Error');
+    }
+  }
+});
 
+app.all('/admin/*', async (req: Request, res: Response) => {
+  try {
+    const targetUrl = `${endpoints.admin}${req.path.replace('/admin', '')}`;
 
-app.listen(PORT,(()=>{
-    console.log(`gatway server running at http://localhost:${PORT}`)
-}))
+    const response = await axios({
+      method: req.method as 'GET' | 'POST' | 'PUT' | 'DELETE',
+      url: targetUrl,
+      data: req.body,
+      headers: req.headers,
+      params: req.query,
+      timeout: 10000,
+    });
+
+    res.status(response.status).send(response.data);
+
+  } catch (error: any) {
+    console.error('Error in /admin/* proxy route:', error.message || error);
+
+    if (error.response) {
+      res.status(error.response.status).send(error.response.data);
+    } else {
+      res.status(500).send('Internal Server Error');
+    }
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`API Gateway running at http://localhost:${PORT}`);
+});
