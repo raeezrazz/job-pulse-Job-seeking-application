@@ -1,3 +1,4 @@
+import { UserService } from './../services/userService';
 import { IUser } from "../interfaces/userTypes";
 import { UserService } from "../services/userService";
 import { AuthService } from "../services/authService";
@@ -10,10 +11,10 @@ export class AuthController {
   private otpService: OtpService;
   private authService: AuthService;
 
-  constructor() {
+  constructor(userService: UserService , otpService: OtpService , authService: AuthService) {
     this.userService = new UserService();
     this.otpService = new OtpService();
-    this.authService = new AuthService();
+    this.authService =  authService
   }
 
   public registerUser = async (req: Request, res: Response): Promise<any> => {

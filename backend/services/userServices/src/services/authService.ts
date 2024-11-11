@@ -12,8 +12,8 @@ import { hashPassword } from '../utils/bcrypt/passwordHash';
 export class AuthService {
     private userRepository : UserRepository
 
-    constructor(){
-        this.userRepository = new UserRepository()
+    constructor(userRepository:UserRepository){
+        this.userRepository = new UserRepository
     }
     async registerUser(userData: RegisterUserDTO): Promise<IUser> {
         const { username, email, password } = userData;
