@@ -71,133 +71,128 @@ function AdminHome() {
         return <Dashboard />;
     }
   };
-
   return (
-    <div className="flex">
+    <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <Card className="h-[calc(100vh)] w-full max-w-[15rem] bg-blue-700 p-4 shadow-xl shadow-blue-gray-900">
-      <div className="mb-2 p-4 ">
-        <Typography variant="h5" color="blue-gray">
-          Welcome Admin
-        </Typography>
-        
-      </div>
-      <List>
-        <Accordion
-          open={open === 1}
-          icon={
-            <ChevronDownIcon
-              strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${open === 1 ? "rotate-180" : ""}`}
-            />
-          }
-        >
-          <ListItem className="p-0" selected={open === 1}>
-            <AccordionHeader onClick={() => handleOpen(1)} className="border-b-0 p-3">
-              <ListItemPrefix>
-                <PresentationChartBarIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              <Typography color="blue-gray" className="mr-auto font-normal">
-                Dashboard
-              </Typography>
-            </AccordionHeader>
+      <Card className="fixed h-full w-full max-w-[15rem] bg-dark-blue shadow-xl shadow-gray-900 rounded-none">
+        <div className="mb-2 w-full p-4 bg-blue-900 flex">
+          <img
+            src="https://randomuser.me/api/portraits/men/75.jpg"
+            alt="Profile"
+            className="w-16 h-16 rounded-full border-2 border-white mb-2"
+          />
+          <Typography variant="h5" color="white" className="pl-5">
+            Welcome Admin
+          </Typography>
+        </div>
+        <List className="text-sm">
+          <Accordion open={open === 1} icon={<ChevronDownIcon strokeWidth={2.5} className={`mx-auto h-3 w-4 transition-transform ${open === 1 ? "rotate-180" : ""}`} />}>
+            <ListItem className="p-0 text-white" selected={open === 1}>
+              <AccordionHeader onClick={() => handleOpen(1)} className="border-b-0 p-3">
+                <ListItemPrefix>
+                  <PresentationChartBarIcon className="h-5 w-5" color="orange" />
+                </ListItemPrefix>
+                <Typography color="white" className="mr-auto text-sm">
+                  Dashboard
+                </Typography>
+              </AccordionHeader>
+            </ListItem>
+            <AccordionBody className="py-1">
+              <List className="p-0">
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                  </ListItemPrefix>
+                  Analytics
+                </ListItem>
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                  </ListItemPrefix>
+                  Reporting
+                </ListItem>
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                  </ListItemPrefix>
+                  Projects
+                </ListItem>
+              </List>
+            </AccordionBody>
+          </Accordion>
+          <Accordion open={open === 2} icon={<ChevronDownIcon strokeWidth={2.5} className={`mx-auto h-3 w-4 transition-transform ${open === 2 ? "rotate-180" : ""}`} />}>
+            <ListItem className="p-0 text-white" selected={open === 2}>
+              <AccordionHeader onClick={() => setActivePage('user-management')} className="border-b-0 p-3">
+                <ListItemPrefix>
+                  <ShoppingBagIcon className="h-5 w-5" />
+                </ListItemPrefix>
+                <Typography color="white" className="mr-auto text-sm">
+                  User Management
+                </Typography>
+              </AccordionHeader>
+            </ListItem>
+            <AccordionBody className="py-1">
+              <List className="p-0">
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                  </ListItemPrefix>
+                  Orders
+                </ListItem>
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                  </ListItemPrefix>
+                  Products
+                </ListItem>
+              </List>
+            </AccordionBody>
+          </Accordion>
+          <ListItem className="text-white">
+            <ListItemPrefix>
+              <InboxIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            Inbox
+            <ListItemSuffix>
+              <Chip value="14" size="sm" variant="ghost" color="white" className="rounded-full" />
+            </ListItemSuffix>
           </ListItem>
-          <AccordionBody className="py-1">
-            <List className="p-0">
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                </ListItemPrefix>
-                Analytics
-              </ListItem>
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                </ListItemPrefix>
-                Reporting
-              </ListItem>
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                </ListItemPrefix>
-                Projects
-              </ListItem>
-            </List>
-          </AccordionBody>
-        </Accordion>
-        <Accordion
-          open={open === 2}
-          icon={
-            <ChevronDownIcon
-              strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${open === 2 ? "rotate-180" : ""}`}
-            />
-          }
-        >
-          <ListItem className="p-0" selected={open === 2}>
-            <AccordionHeader onClick={() => handleOpen(2)} className="border-b-0 p-3">
-              <ListItemPrefix>
-                <ShoppingBagIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              <Typography color="blue-gray" className="mr-auto font-normal">
-                E-Commerce
-              </Typography>
-            </AccordionHeader>
+          <ListItem className="text-white">
+            <ListItemPrefix>
+              <UserCircleIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            Profile
           </ListItem>
-          <AccordionBody className="py-1">
-            <List className="p-0">
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                </ListItemPrefix>
-                Orders
-              </ListItem>
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                </ListItemPrefix>
-                Products
-              </ListItem>
-            </List>
-          </AccordionBody>
-        </Accordion>
-        <ListItem>
-          <ListItemPrefix>
-            <InboxIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Inbox
-          <ListItemSuffix>
-            <Chip value="14" size="sm" variant="ghost" color="blue-gray" className="rounded-full" />
-          </ListItemSuffix>
-        </ListItem>
-        <ListItem>
-          <ListItemPrefix>
-            <UserCircleIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Profile
-        </ListItem>
-        <ListItem>
-          <ListItemPrefix>
-            <Cog6ToothIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Settings
-        </ListItem>
-        <ListItem>
-          <ListItemPrefix>
-            <PowerIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Log Out
-        </ListItem>
-      </List>
-    </Card>
-
+          <ListItem className="text-white">
+            <ListItemPrefix>
+              <Cog6ToothIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            Settings
+          </ListItem>
+          <ListItem className="text-white">
+            <ListItemPrefix>
+              <PowerIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            Log Out
+          </ListItem>
+        </List>
+      </Card>
+  
       {/* Main Content */}
-      <div className="flex-1 p-6">
-        <h2 className="text-2xl font-bold">{activePage.replace('-', ' ').toUpperCase()}</h2>
-        {renderContent()}
+      <div className="flex-1 ml-[15rem] overflow-hidden">
+        {/* Top Heading */}
+        <div className="sticky top-0 z-10 bg-white shadow p-4 p-6 m-5">
+          <h2 className="text-2xl font-bold">{activePage.replace('-', ' ').toUpperCase()}</h2>
+        </div>
+  
+        {/* Scrollable Content */}
+        <div className="p-6 overflow-y-auto h-[calc(100vh-4rem)]">
+          {renderContent()}
+        </div>
       </div>
     </div>
   );
+  
 }
 
 const Dashboard = () => (
