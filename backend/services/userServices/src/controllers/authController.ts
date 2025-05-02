@@ -1,6 +1,5 @@
 import { UserService } from './../services/userService';
 import { IUser } from "../interfaces/userTypes";
-import { UserService } from "../services/userService";
 import { AuthService } from "../services/authService";
 import { Request, Response } from "express";
 import { OtpService } from "../services/otpService";
