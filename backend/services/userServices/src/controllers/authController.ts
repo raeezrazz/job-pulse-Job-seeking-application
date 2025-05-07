@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import { OtpService } from "../services/otpService";
 import { RegisterUserDTO } from "../interfaces/userTypesDTO";
 
+
 export class AuthController {
   private userService: UserService;
   private otpService: OtpService;

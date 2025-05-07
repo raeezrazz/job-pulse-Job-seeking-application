@@ -5,9 +5,9 @@ import { AuthController } from '../controllers/authController';
 import { validateRequest } from '../middlewares/validateRegister';
 const router = Router()
 const userController = new UserController()
-const authController = new AuthController()
+// const authController = new AuthController()
 
-router.post("/register",validateRequest,authController.registerUser)
+// router.post("/register",validateRequest,authController.registerUser)
 router.post('/login',userController.login)
 
 router.post("/resentOtp",userController.resentOtp)

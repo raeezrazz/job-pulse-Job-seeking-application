@@ -13,6 +13,39 @@ export class UserController {
     this.otpService = new OtpService();
   }
 
+   async registerUser(req: Request, res: Response){
+     
+
+    try {
+      const data:RegisterUserDTO = req.body
+      const { user, accessToken, refreshToken } =
+        await this.userService.registerUser(data);
+
+        res.cookie('accessToken', accessToken, {
+          httpOnly: true,
+          secure: true, // set true if using https
+          maxAge: 15 * 60 * 1000, // 15 minutes
+        });
+
+        res.cookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          secure: true, // set true if using https
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
+
+      this.otpService.sendMail(data.email);
+      console.log("ere is the user info data stored in the backend", user);
+      return res.status(201).json({
+        success: true,
+        data: user,
+        accessToken,
+        message: "User Reguister successfull",
+      });
+    } catch (error) {
+      return res.status(500).json({ message: "server error", error });
+    }
+  };
+
   public login = async (req: Request, res: Response): Promise<any> => {
     try {
       const { email, password } = req.body;
@@ -64,38 +97,7 @@ export class UserController {
     }
   };
 
-  public registerUser = async (req: Request, res: Response): Promise<any> => {
-    console.log("here reacjed in register", req.body);
-     const data:RegisterUserDTO = req.body
-
-    try {
-      const { user, accessToken, refreshToken } =
-        await this.userService.registerUser(data);
-
-        res.cookie('accessToken', accessToken, {
-          httpOnly: true,
-          secure: true, // set true if using https
-          maxAge: 15 * 60 * 1000, // 15 minutes
-        });
-
-        res.cookie('refreshToken', refreshToken, {
-          httpOnly: true,
-          secure: true, // set true if using https
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-        });
-
-      this.otpService.sendMail(data.email);
-      console.log("ere is the user info data stored in the backend", user);
-      return res.status(201).json({
-        success: true,
-        data: user,
-        accessToken,
-        message: "User Reguister successfull",
-      });
-    } catch (error) {
-      return res.status(500).json({ message: "server error", error });
-    }
-  };
+ 
 
 
   public refreshTokenUpdate = async(req:Request , res: Response):Promise<any>=>{
