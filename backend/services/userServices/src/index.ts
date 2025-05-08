@@ -14,16 +14,17 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+
 app.use(cors({
-  origin: 'http://localhost:5000', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: 'http://localhost:5173', 
   credentials: true,
 }));
 connectDB()
 
 app.use(cookieParser())
 
-app.use('/',router)
+
+app.use('/user',router)
 
 app.use(errorHandler)
 

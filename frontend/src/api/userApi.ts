@@ -5,6 +5,7 @@ import { UserUpdateForm , SignUpFormData, LoginFormData } from "../interfaces/Us
 
 
 export const signUp = async(formData: SignUpFormData) =>{
+    console.log("here in the axios register reaching")
     return await apiClient.post("/user/register",formData,{withCredentials:true}); 
 }
 export const login = async(formData: LoginFormData)=>{
