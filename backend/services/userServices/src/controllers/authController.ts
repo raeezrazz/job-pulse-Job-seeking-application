@@ -17,7 +17,7 @@ export class AuthController {
     this.authService =  authService
   }
 
-  public registerUser = async (req: Request, res: Response): Promise<any> => {
+  public registerUser = async (req: Request,  res: Response): Promise<any> => {
     const data: RegisterUserDTO = req.body;
 
     try {
