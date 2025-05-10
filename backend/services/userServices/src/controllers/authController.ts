@@ -14,7 +14,7 @@ export class AuthController {
   constructor(userService: UserService , otpService: OtpService , authService: AuthService) {
     this.userService = new UserService();
     this.otpService = new OtpService();
-    this.authService =  authService
+    this.authService = authService
   }
 
   public registerUser = async (req: Request,  res: Response): Promise<any> => {
