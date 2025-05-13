@@ -22,9 +22,6 @@ export class AuthController {
 
     try {
       const user = await this.authService.registerUser(data);
-
-      
-
       await this.otpService.sendMail(data.email);
 
       return res.status(201).json({
