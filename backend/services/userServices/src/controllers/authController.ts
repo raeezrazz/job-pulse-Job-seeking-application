@@ -24,7 +24,7 @@ export class AuthController {
       const user = await this.authService.registerUser(data);
       await this.otpService.sendMail(data.email);
 
-      return res.status(201).json({ 
+      return res.status(201).json({
         success: true,
         data: user,
         message: "User registration successful",
