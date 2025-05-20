@@ -22,8 +22,6 @@ router.patch('/updateUser',userController.updateUserData)
 router.delete('/logout',userController.logoutUser)
 
 router.get('/refresh-token',userController.refreshTokenUpdate)
-
-
 router.get('/loadUsers',userController.getAllUsers)
 
 export default router
